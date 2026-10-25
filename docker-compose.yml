@@ -1,0 +1,58 @@
+name: assinatura-digital
+
+# Políticas de segurança aplicadas aos contêineres de aplicação
+x-hardening: &hardening
+  security_opt: ["no-new-privileges:true"]   # impede escalonamento de privilégios
+  cap_drop: ["ALL"]                          # remove todas as capabilities Linux
+  restart: unless-stopped
+  pids_limit: 200
+
+services:
+  mongo:            # use MongoDB Atlas em produção (troque MONGODB_URI e remova este serviço)
+    image: mongo:7
+    command: ["mongod", "--auth", "--bind_ip", "0.0.0.0"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes: ["mongo-data:/data/db"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    networks: [internal]        # sem porta publicada: só o backend alcança o banco
+
+  backend:
+    <<: *hardening
+    build: ./backend
+    env_file: .env
+    read_only: true             # sistema de arquivos imutável
+    tmpfs: ["/tmp"]
+    volumes: ["uploads:/data/uploads"]
+    mem_limit: 512m
+    ports: ["4000:4000"]
+    depends_on: [mongo]
+    networks: [internal, public]
+
+  frontend:                     # Next.js exportado e servido por nginx sem root
+    <<: *hardening
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:4000/api}
+    environment:
+      API_ORIGIN: ${PUBLIC_API_ORIGIN:-http://localhost:4000}
+    mem_limit: 128m
+    ports: ["3000:8080"]
+    networks: [public]
+
+  mailhog:                      # caixa de e-mail de desenvolvimento (UI em http://localhost:8025)
+    image: mailhog/mailhog
+    security_opt: ["no-new-privileges:true"]
+    ports: ["8025:8025"]
+    networks: [internal, public]
+
+networks:
+  internal: { internal: true }
+  public: {}
+
+volumes:
+  mongo-data:
+  uploads:
