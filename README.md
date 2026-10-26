@@ -28,12 +28,12 @@ Módulo de **assinatura digital** para um negócio que precisa assinar documento
 
 ## 👥 Participantes
 
-| # | Nome | GitHub | Contribuição |
-|---|------|--------|--------------|
-| 1 | Patrick Gusmão | [@patrickgusmao10](https://github.com/patrickgusmao10) |
-| 2 | Lucas Moreira
+| # | Integrantes |
+|---|------|--------|
+| 1 | Patrick Gusmão |
+| 2 | Lucas Moreira |
 | 3 | Bruno Costa |
-| 4 | Enzo Olveira |
+| 4 | Enzo Oliveira |
 
 ---
 
