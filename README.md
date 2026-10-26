@@ -29,7 +29,7 @@ Módulo de **assinatura digital** para um negócio que precisa assinar documento
 ## 👥 Participantes
 
 | # | Integrantes |
-|---|------|--------|
+|---|-------------|
 | 1 | Patrick Gusmão |
 | 2 | Lucas Moreira |
 | 3 | Bruno Costa |
